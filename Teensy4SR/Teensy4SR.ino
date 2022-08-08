@@ -88,7 +88,8 @@ void loop() {
     digitalWrite(LED_BUILTIN, LED_BUILTIN_state);
     //Serial.printf("%08d: %02X %02X %02X %02X\n", txmsg2.id, txmsg2.buf[0], txmsg2.buf[1], txmsg2.buf[2], txmsg2.buf[3]);
   }
-  if ((RXTimer > 9000) && newData == true) {
+  if ((RXTimer > 100000) && newData == true) {
+    newData = false;
     digitalWrite(GREEN_LED_PIN, LOW);
     digitalWrite(LED_BUILTIN, LOW);
     Serial.printf("Messages Sent:%d\n", TXCount2);
@@ -113,6 +114,7 @@ void printFrame(CAN_message_t rxmsg, uint8_t channel, uint32_t RXCount)
 
 void canSniff(const CAN_message_t &rxmsg1) {
   RXCount1++;
+  RXTimer = 0;
   newData = true;
   //printFrame(rxmsg1, 1, RXCount1);
   GREEN_LED_state = !GREEN_LED_state;
