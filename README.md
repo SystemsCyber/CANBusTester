@@ -36,7 +36,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
   - CAN Shield
     * Checks to see if voltage and resistance on the CAN bus are correct
 * **Teensy 4.0 w/ MCP2562FD**
-  - Flood CAN line
+  - Flood CAN line(s)
     * Sends messages at 100% bus load to obersve if any packets get dropped
 * **Test Subject**
   - Logs can data
