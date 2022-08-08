@@ -6,7 +6,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
   - How many packets dropped
   - Minimum bus load before packets start dropping
   - How long can it handle full bus load before packet loss
-- Operates at 100% bus load indefinitely
+- Operates at 100% bus load
 - Test subject outputs a log file
   - Log file needs time, extended ID, and data
 - CAN bus tester is able to test any CAN bus logging device
