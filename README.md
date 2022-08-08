@@ -31,7 +31,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 ## Implementation
 * **Raspberry pi**
   - User Interface
-    * Allows for flooding the bus with start and stop commands to the CAN Logger 3
+    * Allows for flooding the bus with start and stop commands to the Teensy4.0
     * Configuring and running self tests
   - CAN Shield
     * Checks to see if voltage and resistance on the CAN bus are correct
