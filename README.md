@@ -37,5 +37,5 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
     * Outputs CAN data into a log file that determines wether the test was passed
 
 ## Test Plan
-* **Test Case - **
+* Test Case - 
 
