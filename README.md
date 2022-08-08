@@ -9,7 +9,6 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 - Operates at 100% bus load indefinitely
 - Test subject outputs a log file
   - Log file needs time, extended ID, and data
-- Device requires SocketCAN to work
 - CAN bus tester is able to test any CAN bus logging device
 - This device will support multiple I/O connection types 
   - D-sub 9
@@ -17,7 +16,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
   - Mini USB
   - MicroSD Slot
 - Implements self tests to isolate the testing system and verify it works
-- Sends and receives on one CAN line
+- Supports two CAN channels at 250k or 500k baudrate
 ## Test System Block Diagram
 ![alt text](CANBusTester.drawio.png)
 
