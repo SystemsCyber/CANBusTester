@@ -18,7 +18,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
   - D-sub 9
   - D-sub 15
   - 3-pin screw terminal 
-  - Barrel Jack (Power input for display, pi, and teensy) -> 12+v step down to 5v
+  - Barrel Jack (Power input for teensy4.0) -> 12+v step down to 5v
 - Implements self tests (<1s) to isolate the testing system and verify it works
 - Supports at least two CAN channels up to 1MB/s
 - Supports at least one CANFD channel up to 8MB/s
@@ -35,7 +35,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 * **Teensy 4.0 w/ MCP2562FD**
   - Flood CAN line(s)
     * Sends messages at 100% bus load to obersve if any packets get dropped
-   - Configuring and running self tests
+  - Configuring and running self tests
 * **Test Subject**
   - Logs can data
     * Outputs CAN data into a log file that determines wether the test was passed
