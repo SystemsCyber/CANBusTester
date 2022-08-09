@@ -83,9 +83,9 @@ void loop() {
   }
 }
 
-void canSniff(const CAN_message_t &rxmsg1) {                        // function to increment on each received CAN frame
+void canSniff(const CAN_message_t &rxmsg1) {                        // Function to increment on each received CAN frame
   RXCount1++;
 }
-void canSend(const CAN_message_t &txmsg2) {                         // function to increment on each sent CAN frame
+void canSend(const CAN_message_t &txmsg2) {                         // Function to increment on each sent CAN frame
   TXCount2++;
 }
