@@ -63,7 +63,7 @@ void loop() {
     else if (command.equals("stop")) {
       digitalWrite(LED_BUILTIN, LOW);
       toggle = false;
-      delay(10);                                                    // Delay needed for accurate count of received frames
+      delay(20);                                                    // Delay needed for accurate count of received frames
       Serial.printf("Messages Sent:%d\n", TXCount2);                // Prints out test results
       Serial.printf("Messages Received:%d\n", RXCount1);
       RXCount1 = 0;                                                 // Reset Count for next test
@@ -72,14 +72,12 @@ void loop() {
   }
 
   if (toggle == true) {
-    u_counter.count = micro_counter;                                // Create random bytes to fill msg buffer
+    u_counter.count = micro_counter;                                // Create random bytes using counter to fill msg buffer
     for (int i = 0; i < 4; i++) {
       txmsg2.buf[i] = u_counter.b[i];
     }
     txmsg2.id = TXCount2;
     while(!Can2.write(txmsg2));                                     // Send CAN message once the previous message is done transmitting
-    LED_BUILTIN_state = !LED_BUILTIN_state;
-    digitalWrite(LED_BUILTIN, LED_BUILTIN_state);
   }
 }
 
