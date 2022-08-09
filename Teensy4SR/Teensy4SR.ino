@@ -72,7 +72,6 @@ void loop() {
   }
 
   if (toggle == true) {
-    
     u_counter.count = micro_counter;
     for (int i = 0; i < 4; i++) {
       txmsg2.buf[i] = u_counter.b[i];
