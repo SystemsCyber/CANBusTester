@@ -29,7 +29,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 - Portable
   - Smaller than 6" x 6" x 3"
 ## Test System Block Diagram
-![alt text](CANBusTester.drawio.png)
+![alt text](figures/CANBusTester.drawio.png)
 
 ## Implementation
 * **Teensy 4.0 w/ MCP2562FD**
