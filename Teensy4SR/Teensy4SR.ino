@@ -1,5 +1,5 @@
 #include <FlexCAN_T4.h>
-FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_2> Can2;
+FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
 //Define message from FlexCAN library
@@ -21,6 +21,16 @@ boolean LED_BUILTIN_state;
 
 String command;
 boolean toggle = false;
+
+elapsedMicros micro_counter;
+
+union u_seconds {
+  uint32_t count;
+  byte b[4];
+};
+
+// Declare the variable using the union
+u_seconds u_counter;
 
 void setup() {
   Serial.begin(9600); delay(400);
@@ -61,30 +71,21 @@ void loop() {
   }
 
   if (toggle == true) {
+    
+    u_counter.count = micro_counter;
+    for (int i = 0; i < 4; i++) {
+      txmsg2.buf[i] = u_counter.b[i];
+    }
     if (Can2.getTXQueueCount() == 0) {
+      txmsg2.id = TXCount2;
       Can2.write(txmsg2);
       TXCount2++;
     }
     LED_BUILTIN_state = !LED_BUILTIN_state;
     digitalWrite(LED_BUILTIN, LED_BUILTIN_state);
-    //Serial.printf("%08d: %02X %02X %02X %02X\n", TXCount2,txmsg2.buf[0], txmsg2.buf[1], txmsg2.buf[2], txmsg2.buf[3]);
   }
-}
-
-void printFrame(CAN_message_t rxmsg, uint8_t channel, uint32_t RXCount)
-{
-  char CANdataDisplay[50];
-  sprintf(CANdataDisplay, "%d %12lu %12lu %08X %d %d", channel, RXCount, micros(), rxmsg.id, rxmsg.flags.extended, rxmsg.len);
-  Serial.print(CANdataDisplay);
-  for (uint8_t i = 0; i < rxmsg.len; i++) {
-    char CANBytes[4];
-    sprintf(CANBytes, " %02X", rxmsg.buf[i]);
-    Serial.print(CANBytes);
-  }
-  Serial.println();
 }
 
 void canSniff(const CAN_message_t &rxmsg1) {
   RXCount1++;
-  //printFrame(rxmsg1, 1, RXCount1);
 }
