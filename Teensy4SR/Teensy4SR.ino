@@ -18,6 +18,7 @@ boolean LED_BUILTIN_state;
 
 //Define default baudrate
 #define BAUDRATE250K 250000
+#define BAUDRATE500K 500000
 
 String command;
 boolean toggle = false;
