@@ -13,7 +13,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 - Test subject outputs a log file
   - Log file needs time, extended ID, and data
 - CAN bus tester is able to test any CAN bus logging device
-- CAN2.0 compliant with ISO11898-2/5 
+- Supports CAN2.0 compliant with ISO11898-2/5 
 - This device will support multiple I/O connection types 
   - D-sub 9
   - D-sub 15
