@@ -7,7 +7,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
   - Minimum bus load before packets start dropping
   - How long can it handle full bus load before packet loss
 - Operates at 100% bus load
-- Can function without any external devies
+- Can function without any external devices
 - Surface of the device should not exceed 100 degrees fahrenheit
 - Device has two independent properly terminated CAN buses
 - Test subject outputs a log file
