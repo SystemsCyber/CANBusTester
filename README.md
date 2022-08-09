@@ -16,7 +16,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 - CAN2.0 compliant with ISO11898-2/5 
 - This device will support multiple I/O connection types 
   - D-sub 9
-  - D-sub 15p
+  - D-sub 15
   - 3-pin screw terminal 
   - Barrel Jack (Power input for display, pi, and teensy) -> 12+v step down to 5v
 - Implements self tests (<1s) to isolate the testing system and verify it works
