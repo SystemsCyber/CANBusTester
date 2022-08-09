@@ -25,7 +25,7 @@ The goal of this device is to test the perfomance of CAN logging devices by meas
 - For basic single CAN channel testing, CAN transcievers are bridged.
   - This allows testing slow devices without write buffers filling up.
 - Simple to operate
-  - Less than 10 seconds to perform the basic CAN bus test.
+  - Less than 10 seconds to perform a test.
 - Portable
   - Smaller than 6" x 6" x 3"
 ## Test System Block Diagram
