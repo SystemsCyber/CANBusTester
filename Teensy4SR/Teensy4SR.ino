@@ -20,11 +20,10 @@ boolean LED_BUILTIN_state;
 #define BAUDRATE250K 250000
 #define BAUDRATE500K 500000
 
-String command;
+String command;                                                     // Variable for serial commands - Remove when LCD menu is added
 boolean toggle = false;
 
-elapsedMicros micro_counter;
-
+elapsedMicros micro_counter;                                        // Set up elapsed micros to generate random bytes
 union u_seconds {
   uint32_t count;
   byte b[4];
@@ -38,11 +37,12 @@ void setup() {
   Can1.begin();
   Can1.setBaudRate(BAUDRATE250K);
   Can1.setMaxMB(16);
-  Can1.enableFIFO(true);
+  Can1.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
   Can1.enableFIFOInterrupt();
-  Can1.onReceive(canSniff); // allows FIFO messages to be received in the supplied callback.
+  Can1.onReceive(canSniff);                                         // Interupt handler for counting and aknowledging all received CAN frames
   Can2.begin();
   Can2.setBaudRate(BAUDRATE250K);
+  Can2.onTransmit(canSend);                                         // Interupt handler for counting transmitted CAN frames
 
   //Set message extension, ID, and length
   txmsg2.flags.extended = 1;
@@ -56,36 +56,36 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    command = Serial.readStringUntil('\n');
+    command = Serial.readStringUntil('\n');                         // Serial start and stop to be replaced by LCD menu w/ buttons
     if (command.equals("start")) {
       toggle = true;
     }
     else if (command.equals("stop")) {
       digitalWrite(LED_BUILTIN, LOW);
       toggle = false;
-      delay(10);
-      Serial.printf("Messages Sent:%d\n", TXCount2);
+      delay(10);                                                    // Delay needed for accurate count of received frames
+      Serial.printf("Messages Sent:%d\n", TXCount2);                // Prints out test results
       Serial.printf("Messages Received:%d\n", RXCount1);
-      RXCount1 = 0;
+      RXCount1 = 0;                                                 // Reset Count for next test
       TXCount2 = 0;
     }
   }
 
   if (toggle == true) {
-    u_counter.count = micro_counter;
+    u_counter.count = micro_counter;                                // Create random bytes to fill msg buffer
     for (int i = 0; i < 4; i++) {
       txmsg2.buf[i] = u_counter.b[i];
     }
-    if (Can2.getTXQueueCount() == 0) {
-      txmsg2.id = TXCount2;
-      Can2.write(txmsg2);
-      TXCount2++;
-    }
+    txmsg2.id = TXCount2;
+    while(!Can2.write(txmsg2));                                     // Send CAN message once the previous message is done transmitting
     LED_BUILTIN_state = !LED_BUILTIN_state;
     digitalWrite(LED_BUILTIN, LED_BUILTIN_state);
   }
 }
 
-void canSniff(const CAN_message_t &rxmsg1) {
+void canSniff(const CAN_message_t &rxmsg1) {                        // function to increment on each received CAN frame
   RXCount1++;
+}
+void canSend(const CAN_message_t &txmsg2) {                         // function to increment on each sent CAN frame
+  TXCount2++;
 }
