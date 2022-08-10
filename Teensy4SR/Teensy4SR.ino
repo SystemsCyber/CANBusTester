@@ -9,6 +9,8 @@ static CAN_message_t rxmsg1;
 uint32_t TXCount2 = 0;
 uint32_t RXCount1 = 0;
 
+int prevMsgId = -1;
+
 //Define LED
 #define GREEN_LED_PIN 15
 #define RED_LED_PIN 14
@@ -40,6 +42,7 @@ void setup() {
   Can1.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
   Can1.enableFIFOInterrupt();
   Can1.onReceive(canSniff);                                         // Interupt handler for counting and aknowledging all received CAN frames
+
   Can2.begin();
   Can2.setBaudRate(BAUDRATE250K);
   Can2.onTransmit(canSend);                                         // Interupt handler for counting transmitted CAN frames
@@ -68,22 +71,38 @@ void loop() {
       Serial.printf("Messages Received:%d\n", RXCount1);
       RXCount1 = 0;                                                 // Reset Count for next test
       TXCount2 = 0;
+      prevMsgId = -1;
     }
   }
 
   if (toggle == true) {
+    txmsg2.id = TXCount2;
     u_counter.count = micro_counter;                                // Create random bytes using counter to fill msg buffer
     for (int i = 0; i < 4; i++) {
       txmsg2.buf[i] = u_counter.b[i];
     }
-    txmsg2.id = TXCount2;
-    while(!Can2.write(txmsg2));                                     // Send CAN message once the previous message is done transmitting
+    if (Can2.getTXQueueCount() == 0) {
+      Can2.write(txmsg2);                                           // Send CAN message once the previous message is done transmitting
+      TXCount2++;
+    }
+    LED_BUILTIN_state = !LED_BUILTIN_state;
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_state);
   }
 }
 
 void canSniff(const CAN_message_t &rxmsg1) {                        // Function to increment on each received CAN frame
   RXCount1++;
+  if (rxmsg1.id - prevMsgId != 1) {
+    toggle = false;
+    Serial.printf("Test Failed: ID's did not match\n");
+    Serial.printf("Previous Message ID: %d\n",prevMsgId);
+    Serial.printf("Current Message ID: %d\n",rxmsg1.id);
+  } else {
+    prevMsgId = rxmsg1.id;
+  }
+  digitalWrite(LED_BUILTIN, LOW);
 }
+
 void canSend(const CAN_message_t &txmsg2) {                         // Function to increment on each sent CAN frame
-  TXCount2++;
+  //TXCount2++;
 }
