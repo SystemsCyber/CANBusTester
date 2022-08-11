@@ -1,7 +1,8 @@
+#include <Arduino.h>
 #include <FlexCAN_T4.h>
-FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> Can1;
+FlexCAN_T4FD<CAN1, RX_SIZE_256, TX_SIZE_16> Canfd;
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
-FlexCAN_T4FD<CAN3, RX_SIZE_256, TX_SIZE_16> Can3;
 CANFD_timings_t config;
 
 //Define message from FlexCAN library
@@ -17,7 +18,6 @@ uint32_t RXCount2 = 0;
 
 uint32_t prevMsgId1 = -1;
 uint32_t prevMsgId2 = -1;
-uint32_t prevMsgId3 = -1;
 
 //Define LED
 #define GREEN_LED_PIN 15
@@ -79,7 +79,7 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
 
   Serial.printf("Welcome to the CAN Bus Tester Device\n");
-  Serial.printf("Start(y)    Stop(n)\n\n");
+  Serial.printf("Start(y)   Stop(n)   SelfTest(t)\n\n");
 }
 
 void loop() {
