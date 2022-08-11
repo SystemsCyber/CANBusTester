@@ -1,19 +1,24 @@
 #include <FlexCAN_T4.h>
-FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
+FlexCAN_T4FD<CAN3, RX_SIZE_256, TX_SIZE_16> Can3;
+CANFD_timings_t config;
 
 //Define message from FlexCAN library
+static CANFD_message_t txmsg3;
+static CAN_message_t txmsg1;
 static CAN_message_t txmsg2;
 static CAN_message_t rxmsg1;
 
 uint32_t TXCount2 = 0;
-uint32_t RXCount1 = 0;
+uint32_t RXCount = 0;
 
-int prevMsgId = -1;
+uint32_t prevMsgId = -1;
 
 //Define LED
 #define GREEN_LED_PIN 15
 #define RED_LED_PIN 14
+#define BLUE_LED_PIN 13
 boolean GREEN_LED_state;
 boolean RED_LED_state;
 boolean LED_BUILTIN_state;
@@ -34,6 +39,7 @@ union u_seconds {
 // Declare the variable using the union
 u_seconds u_counter;
 
+
 void setup() {
   Serial.begin(9600); delay(400);
   Can1.begin();
@@ -42,12 +48,19 @@ void setup() {
   Can1.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
   Can1.enableFIFOInterrupt();
   Can1.onReceive(canSniff);                                         // Interupt handler for counting and aknowledging all received CAN frames
+  //Can1.enableLoopback(true);
 
   Can2.begin();
   Can2.setBaudRate(BAUDRATE250K);
-  Can2.onTransmit(canSend);                                         // Interupt handler for counting transmitted CAN frames
+  Can2.setMaxMB(16);
+  Can2.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
+  Can2.enableFIFOInterrupt();
+  Can2.onReceive(canSniff);
+  Can2.enableLoopBack(true);
 
   //Set message extension, ID, and length
+  txmsg1.flags.extended = 1;
+  txmsg1.len = 8;
   txmsg2.flags.extended = 1;
   txmsg2.len = 8;
 
@@ -55,23 +68,22 @@ void setup() {
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+
+  Serial.printf("Welcome to the CAN Bus Tester Device\n");
+  Serial.printf("Start(y)    Stop(n)\n");
 }
 
 void loop() {
   if (Serial.available()) {
     command = Serial.readStringUntil('\n');                         // Serial start and stop to be replaced by LCD menu w/ buttons
-    if (command.equals("start")) {
+    if (command.equals("y")) {
       toggle = true;
     }
-    else if (command.equals("stop")) {
-      digitalWrite(LED_BUILTIN, LOW);
-      toggle = false;
+    else if (command.equals("n")) {
       delay(20);                                                    // Delay needed for accurate count of received frames
       Serial.printf("Messages Sent:%d\n", TXCount2);                // Prints out test results
-      Serial.printf("Messages Received:%d\n", RXCount1);
-      RXCount1 = 0;                                                 // Reset Count for next test
-      TXCount2 = 0;
-      prevMsgId = -1;
+      Serial.printf("Messages Received:%d\n", RXCount);
+      resetTest();
     }
   }
 
@@ -91,18 +103,21 @@ void loop() {
 }
 
 void canSniff(const CAN_message_t &rxmsg1) {                        // Function to increment on each received CAN frame
-  RXCount1++;
+  RXCount++;
   if (rxmsg1.id - prevMsgId != 1) {
-    toggle = false;
     Serial.printf("Test Failed: ID's did not match\n");
-    Serial.printf("Previous Message ID: %d\n",prevMsgId);
-    Serial.printf("Current Message ID: %d\n",rxmsg1.id);
+    Serial.printf("Previous Message ID: %d\n", prevMsgId);
+    Serial.printf("Current Message ID: %d\n", rxmsg1.id);
+    resetTest();
   } else {
     prevMsgId = rxmsg1.id;
   }
-  digitalWrite(LED_BUILTIN, LOW);
 }
 
-void canSend(const CAN_message_t &txmsg2) {                         // Function to increment on each sent CAN frame
-  //TXCount2++;
+void resetTest() {
+  toggle = false;
+  RXCount = 0;
+  TXCount2 = 0;
+  prevMsgId = -1;
+  digitalWrite(LED_BUILTIN, LOW);
 }
