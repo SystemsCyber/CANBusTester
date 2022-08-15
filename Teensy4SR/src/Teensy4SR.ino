@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
-FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_16> Can1;
-FlexCAN_T4FD<CAN1, RX_SIZE_256, TX_SIZE_16> Canfd;
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+//FlexCAN_T4FD<CAN3, RX_SIZE_256, TX_SIZE_16> Canfd;
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
-CANFD_timings_t config;
+//CANFD_timings_t config;
 
 //Define message from FlexCAN library
 static CAN_message_t txmsg1;
@@ -33,9 +33,8 @@ boolean LED_BUILTIN_state;
 
 String command;                                                     // Variable for serial commands - Remove when LCD menu is added
 boolean toggle = false;
-boolean enableCan1 = false;
-boolean enableCan2 = true;
-boolean enableCan3 = false;
+boolean enableCan1 = true;
+boolean enableCan2 = false;
 
 elapsedMillis blinkTimer;
 
