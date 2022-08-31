@@ -1,5 +1,9 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
+#include <SPI.h>
+#include "Adafruit_GFX.h"
+#include "Adafruit_HX8357.h"
+
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 FlexCAN_T4FD<CAN3, RX_SIZE_256, TX_SIZE_16> Canfd;
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
