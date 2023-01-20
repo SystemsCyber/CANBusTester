@@ -2,6 +2,10 @@
     "folders": [
         {
             "path": ".."
+        },
+        {
+            "name": "230110-161039-teensy40",
+            "path": "../../../../PlatformIO/Projects/230110-161039-teensy40"
         }
     ]
 }
