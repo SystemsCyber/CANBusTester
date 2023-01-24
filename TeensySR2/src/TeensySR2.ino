@@ -2,7 +2,9 @@
 #include <Adafruit_GFX.h>
 #include <TouchScreen.h>
 #include <SPI.h>
+#include <FlexCAN_T4.h>
 
+//Touch Screen Setup
 // Define the display and touch screen objects
 const int TFT_CS = 10;
 const int TFT_DC = 9;
@@ -29,6 +31,52 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 290.6);
 int can1BR = 250;
 int can2BR = 250;
 
+//Can Controller Setup
+//Setting up buffers for Can1, Can2, and CanFD in parallel with Can1
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
+FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
+FlexCAN_T4FD<CAN3, RX_SIZE_256, TX_SIZE_16> Canfd;
+CANFD_timings_t config;
+
+//Define message from FlexCAN library
+static CAN_message_t txmsg1;
+static CAN_message_t txmsg2;
+static CAN_message_t rxmsg1;
+static CAN_message_t rxmsg2;
+
+//Initialize send and receive counters
+uint32_t TXCount1 = 0;
+uint32_t TXCount2 = 0;
+uint32_t RXCount1 = 0;
+uint32_t RXCount2 = 0;
+uint32_t prevMsgId1 = -1;
+uint32_t prevMsgId2 = -1;
+
+//Define LED
+#define GREEN_LED_PIN 2
+#define RED_LED_PIN 3
+#define BLUE_LED_PIN 4
+#define ORANGE_LED_PIN 5
+boolean GREEN_LED_state;
+boolean RED_LED_state;
+boolean BLUE_LED_state;
+boolean ORANGE_LED_state;
+boolean LED_BUILTIN_state;
+
+//Define default baudrate
+#define BAUDRATE250K 250000
+#define BAUDRATE500K 500000
+
+//Initialize logic variables for enabling CAN lines
+boolean toggle = false;
+boolean enableCan1 = true;
+boolean enableCan2 = false;
+//add CANFD
+
+//Initialize Timers
+elapsedMillis blinkTimer;
+elapsedMillis testTimer;
+
 void setup() {
   // Initialize touch screen and draw main menu
   tft.begin();
@@ -36,6 +84,42 @@ void setup() {
   tft.setSPISpeed(19000000);
   Serial.begin(115200);
   drawMenu();
+
+  Can1.begin();
+  Can1.setBaudRate(BAUDRATE250K);
+  Can1.setMaxMB(16);
+  Can1.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
+  Can1.enableFIFOInterrupt();
+  Can1.onReceive(canSniff1);                                         // Interupt handler for counting and aknowledging all received CAN frames
+
+  Can2.begin();
+  Can2.setBaudRate(BAUDRATE250K);
+  Can2.setMaxMB(16);
+  Can2.enableFIFO(true);                                            // Enable FIFO to allow for overflow between RX mailboxes
+  Can2.enableFIFOInterrupt();
+  Can2.onReceive(canSniff2);
+  
+  Canfd.begin();
+  config.clock = CLK_24MHz;
+  config.baudrate = 1000000;
+  config.baudrateFD = 2000000;
+  config.propdelay = 190;
+  config.bus_length = 1;
+  config.sample = 70;
+  Canfd.setBaudRate(config);
+
+  //Set message extension, ID, and length
+  txmsg1.flags.extended = 1;
+  txmsg1.len = 8;
+
+  txmsg2.flags.extended = 1;
+  txmsg2.len = 8;
+
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(BLUE_LED_PIN, OUTPUT);
+  pinMode(ORANGE_LED_PIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
@@ -132,7 +216,6 @@ void drawResults(String msg){
 
 //Draw main menu
 void drawMenu() {
-  tft.startWrite();
   //480x320 pixels
   tft.fillScreen(HX8357_WHITE);
   tft.setTextColor(HX8357_BLACK);  tft.setTextSize(2);
@@ -174,8 +257,6 @@ void drawMenu() {
   //Run Button
   drawText(422,287,"Run");
   tft.drawRect(400,270,80,50,HX8357_BLACK);
-
-  tft.endWrite();
 }
 
 //Helper function for drawing text at many different coordinate positions
@@ -190,4 +271,36 @@ void drawText(int x, int y, String msg, byte color){
   tft.setCursor(x,y);
   tft.println(msg);
   tft.setTextColor(HX8357_BLACK);
+}
+
+void canSniff1(const CAN_message_t &rxmsg1) {                        // Function to increment on each received CAN frame
+  Serial.print("Can1 ID: "); Serial.print(rxmsg1.id);
+  Serial.println();
+  RXCount1++;
+  if (rxmsg1.id - prevMsgId1 != 1) {
+    Serial.printf("Can 1 Test Failed: ID's did not match\n");
+    Serial.printf("Previous Message ID: %d\n", prevMsgId1);
+    Serial.printf("Current Message ID: %d\n", rxmsg1.id);
+    digitalWrite(RED_LED_PIN, HIGH);
+    } else {
+    prevMsgId1 = rxmsg1.id;
+    }
+    BLUE_LED_state = !BLUE_LED_state;
+    digitalWrite(BLUE_LED_PIN, BLUE_LED_state);
+}
+
+void canSniff2(const CAN_message_t &rxmsg2) {                        // Function to increment on each received CAN frame
+  Serial.print("Can2 ID: "); Serial.print(rxmsg2.id);
+  Serial.println();
+  RXCount2++;
+  if (rxmsg2.id - prevMsgId2 != 1) {
+    Serial.printf("Can 2 Test Failed: ID's did not match\n");
+    Serial.printf("Previous Message ID: %d\n", prevMsgId2);
+    Serial.printf("Current Message ID: %d\n", rxmsg2.id);
+    digitalWrite(RED_LED_PIN, HIGH);
+    } else {
+    prevMsgId2 = rxmsg2.id;
+    }
+    ORANGE_LED_state = !ORANGE_LED_state;
+    digitalWrite(ORANGE_LED_PIN, ORANGE_LED_state);
 }
