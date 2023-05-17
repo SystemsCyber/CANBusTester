@@ -236,9 +236,6 @@ void runSelfTest() {
       break;
     }
   }
-
-  while((Can2.getTXQueueCount() > 0) || (Can1.getTXQueueCount() > 0));
-  delay(200);
   tft.printf("\nSelf Test Completed\n");
   tft.printf("Can1 messages sent: %d\n",TXCount1);
   tft.printf("Received: %d\n",RXCount2);
