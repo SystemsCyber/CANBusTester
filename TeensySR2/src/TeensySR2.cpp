@@ -50,8 +50,8 @@ uint32_t TXCount1 = 0;
 uint32_t TXCount2 = 0;
 uint32_t RXCount1 = 0;
 uint32_t RXCount2 = 0;
-uint32_t prevMsgId1 = 0;
-uint32_t prevMsgId2 = 0;
+uint32_t prevMsgId1 = -1;
+uint32_t prevMsgId2 = -1;
 
 //Define LED
 #define GREEN_LED_PIN 2
@@ -166,34 +166,34 @@ void drawMenu() {
   tft.drawRect(400,270,80,50,HX8357_BLACK);
 }
 
-void canSniff1(const CAN_message_t &rxmsg1) {                        // Function to increment on each received CAN frame
+void canSniff1(const CAN_message_t &rxmsg1) {                        // Interrupt to increment on each received CAN frame and verify no loss of frames
   RXCount1++;
-  if ((((rxmsg1.id + 1) - prevMsgId1) != 1) && Error1 == false) {
-    // tft.println();
-    // tft.printf("CAN 1 Test Failed: ID's did not match\n");
-    // tft.printf("Previous Message ID: %d\n", prevMsgId1);
-    // tft.printf("Current Message ID: %d\n", rxmsg1.id);
-    // Error1 = true;
-    // //digitalWrite(RED_LED_PIN, HIGH);
-    // } else {
-    // prevMsgId1 = rxmsg1.id;
+  if (((rxmsg1.id - prevMsgId1) != 1) && Error1 == false) {
+    tft.println(rxmsg1.id - prevMsgId1);
+    tft.printf("CAN 1 Test Failed: ID's did not match\n");
+    tft.printf("Previous Message ID: %d\n", prevMsgId1);
+    tft.printf("Current Message ID: %d\n", rxmsg1.id);
+    Error1 = true;
+    //digitalWrite(RED_LED_PIN, HIGH);
+    } else {
+    prevMsgId1 = rxmsg1.id;
     }
     //BLUE_LED_state = !BLUE_LED_state;
     //digitalWrite(BLUE_LED_PIN, BLUE_LED_state);
 }
 
-void canSniff2(const CAN_message_t &rxmsg2) {                        // Function to increment on each received CAN frame
+void canSniff2(const CAN_message_t &rxmsg2) {                        // Interrupt to increment on each received CAN frame and verify no loss of frames
   RXCount2++;
-  if ((((rxmsg2.id + 1) - prevMsgId2) != 1) && Error2 == false) {
-    // tft.println();
-    // tft.printf("CAN 2 Test Failed: ID's did not match\n");
-    // tft.printf("Previous Message ID: %d\n", prevMsgId2);
-    // tft.printf("Current Message ID: %d\n", rxmsg2.id);
-    // Error2 = true;
-    // //digitalWrite(RED_LED_PIN, HIGH);
-    // } else {
-    // prevMsgId2 = rxmsg2.id;
-     }
+  if (((rxmsg2.id - prevMsgId2) != 1) && Error2 == false) {
+    tft.println(rxmsg2.id - prevMsgId2);
+    tft.printf("CAN 2 Test Failed: ID's did not match\n");
+    tft.printf("Previous Message ID: %d\n", prevMsgId2);
+    tft.printf("Current Message ID: %d\n", rxmsg2.id);
+    Error2 = true;
+    //digitalWrite(RED_LED_PIN, HIGH);
+    } else {
+     prevMsgId2 = rxmsg2.id;
+    }
     //ORANGE_LED_state = !ORANGE_LED_state;
     //digitalWrite(ORANGE_LED_PIN, ORANGE_LED_state);
 }
@@ -205,8 +205,8 @@ void resetCounters() {
   RXCount2 = 0;
   TXCount1 = 0;
   TXCount2 = 0;
-  prevMsgId1 = 0;
-  prevMsgId2 = 0;
+  prevMsgId1 = -1;
+  prevMsgId2 = -1;
   //digitalWrite(LED_BUILTIN, LOW);
   //digitalWrite(GREEN_LED_PIN, LOW);
   //digitalWrite(BLUE_LED_PIN, LOW);
@@ -214,7 +214,6 @@ void resetCounters() {
 }
 
 void runSelfTest() {
-  //Serial.printf("Starting Self Test\n");
   testTimer = 0;
   //Turn on bridging
   while(TXCount1 < 100) {
@@ -272,7 +271,6 @@ void selfTestHandle() {
   drawText(0,0,"Performing Self Test...");
   //Code to peform quick test
   runSelfTest();
-  delay(200);
   TSPoint p = ts.getPoint();
   do {
     p = ts.getPoint();
