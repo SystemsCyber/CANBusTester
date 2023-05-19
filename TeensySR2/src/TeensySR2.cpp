@@ -244,6 +244,28 @@ void runSelfTest() {
   resetCounters();
 }
 
+void runQuickStart() {
+  //TSPoint p = ts.getPoint();
+  delay(200);
+  while(ts.pressure() > 1000) {
+    if ((Can1.getTXQueueCount() == 0) && enableCan1) {
+      txmsg1.id = TXCount1;
+      Can1.write(MB8, txmsg1);
+      TXCount1++;
+    }
+
+    if ((Can2.getTXQueueCount() == 0) && enableCan2){
+      txmsg2.id = TXCount2;
+      Can2.write(MB8, txmsg2);                                           // Send CAN message once the previous message is done transmitting
+      TXCount2++;
+    }
+  }
+  tft.printf("\nQuick Test Completed\n");
+  tft.printf("Can1 messages sent: %d\n",TXCount1);
+  tft.printf("Can2 messages sent: %d\n",TXCount2);
+  resetCounters();
+}
+
 void quickStartHandle() {
   // Animate the button press by changing the color of the button
   drawText(12,15,"Quick Start",HX8357_BLUE);
@@ -251,8 +273,8 @@ void quickStartHandle() {
   tft.fillScreen(HX8357_WHITE);
   drawText(0,0,"Performing Quick Test...");
   //Code to peform quick test
+  runQuickStart();
   delay(200);
-  tft.println("(Results)");
   TSPoint p = ts.getPoint();
   do {
     p = ts.getPoint();
@@ -364,7 +386,6 @@ void setup() {
 void loop() {
     // Polling touch screen coordinates  
 	TSPoint p = ts.getPoint();
-
 	// we have some minimum pressure we consider 'valid'
     // pressure of 0 means no pressing!
 	if (p.z < MINPRESSURE || p.z > MAXPRESSURE){
@@ -374,9 +395,6 @@ void loop() {
   	p.x = map(p.x, TS_MINX, TS_MAXX, 0, tft.width());
   	p.y = map(p.y, TS_MINY, TS_MAXY, 0, tft.height());
 
-	//Serial.print("X = "); Serial.print(p.x);
-	//Serial.print("\tY = "); Serial.print(p.y);
-	//Serial.print("\tPressure = "); Serial.println(p.z);
   quickStart.pressedHandler(p.x, p.y);
   selfTest.pressedHandler(p.x, p.y);
   advanced.pressedHandler(p.x, p.y);
