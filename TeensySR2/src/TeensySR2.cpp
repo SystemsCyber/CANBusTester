@@ -31,6 +31,8 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 290.6);
 
 int can1BR = 250;
 int can2BR = 250;
+int can1Counter = 1;
+int can2Counter = 0;
 
 //Can Controller Setup
 //Setting up buffers for Can1, Can2, and CanFD in parallel with Can1
@@ -151,14 +153,30 @@ void drawMenu() {
   drawText(15,115,"Can1:");
   drawText(25,140,"Baudrate(Kbps) - ");
   tft.drawRect(230,130,55,35,HX8357_BLACK);
-  drawText(240,140,String(can1BR));
+  if(can1Counter == 0){
+    drawText(240,140,"NA");
+  }
+  else if(can1Counter == 1){
+    drawText(240,140,String(250));
+  }
+  else if(can1Counter == 2){
+    drawText(240,140,String(500));
+  }
   tft.drawTriangle(295,130,295,165,325,147.5,HX8357_BLACK);
 
   //Can 2 Settings
   drawText(15,215,"Can2:");
   drawText(25,240,"Baudrate(Kbps) - ");
   tft.drawRect(230,230,55,35,HX8357_BLACK);
-  drawText(240,240,String(can2BR));
+  if(can2Counter == 0){
+    drawText(240,240,"NA");
+  }
+  else if(can2Counter == 1){
+    drawText(240,240,String(250));
+  }
+  else if(can2Counter == 2){
+    drawText(240,240,String(500));
+  };
   tft.drawTriangle(295,230,295,265,325,247.5,HX8357_BLACK);
 
   //Run Button
@@ -245,7 +263,6 @@ void runSelfTest() {
 }
 
 void runQuickStart() {
-  //TSPoint p = ts.getPoint();
   delay(200);
   while(ts.pressure() > 1000) {
     if ((Can1.getTXQueueCount() == 0) && enableCan1) {
@@ -308,6 +325,21 @@ void advancedSettingHandle() {
 void can1BaudrateHandle() {
   // Animate the button press by changing the color of the button
   tft.fillTriangle(298,135,298,160,320,147.5,HX8357_BLUE);
+  if(can1Counter == 0){
+    tft.fillRect(231,131,53,33,HX8357_WHITE);
+    drawText(240,140,String(250));
+    can1Counter++;
+  }
+  else if(can1Counter == 1){
+    tft.fillRect(231,131,53,33,HX8357_WHITE);
+    drawText(240,140,String(500));
+    can1Counter++;
+  }
+  else if(can1Counter == 2){
+    tft.fillRect(231,131,53,33,HX8357_WHITE);
+    drawText(240,140,"NA");
+    can1Counter = 0;
+  }
   delay(200);
   // Return the button to its original color
   tft.fillTriangle(298,135,298,160,320,147.5,HX8357_WHITE);
@@ -316,6 +348,21 @@ void can1BaudrateHandle() {
 void can2BaudrateHandle() {
   // Animate the button press by changing the color of the button
   tft.fillTriangle(298,235,298,260,320,247.5,HX8357_BLUE);
+  if(can2Counter == 0){
+    tft.fillRect(231,231,53,33,HX8357_WHITE);
+    drawText(240,240,String(250));
+    can2Counter++;
+  }
+  else if(can2Counter == 1){
+    tft.fillRect(231,231,53,33,HX8357_WHITE);
+    drawText(240,240,String(500));
+    can2Counter++;
+  }
+  else if(can2Counter == 2){
+    tft.fillRect(231,231,53,33,HX8357_WHITE);
+    drawText(240,240,"NA");
+    can2Counter = 0;
+  }
   delay(200);
   // Return the button to its original color
   tft.fillTriangle(298,235,298,260,320,247.5,HX8357_WHITE);
