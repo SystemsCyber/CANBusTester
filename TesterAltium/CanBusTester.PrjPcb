@@ -35,7 +35,10 @@ IsProjectConflictPreventionWarningsEnabled=1
 IsVirtualBomDocumentRemoved=0
 OutputPath=Project Outputs
 LogFolderPath=..\Panel Templates\Project Logs
-ManagedProjectGUID=
+ManagedProjectGUID=3BF64CCA-F6D1-4719-8F54-B4F0B4CE4179
+VaultGUID=3975D4BB-5494-480E-B831-ECCCEEA35F68
+ReleaseVaultName=CSU Systems Cyber
+ItemGUID=3BF64CCA-F6D1-4719-8F54-B4F0B4CE4179
 Template=dxp://VaultExplorer:Navigate_URL?VaultGUID=EF8946EC-8C7E-44C3-AFC6-BF847672DA97&ItemGUID=9C9FC628-F86D-4FC6-8F69-1708612F76C8&RevisionGUID=904ACB18-B2D3-4629-9E7F-703BB80CC106&"MainFilename=PCB_Project1.PrjPCB"
 IncludeDesignInRelease=0
 CrossRefSheetStyle=1
@@ -185,85 +188,118 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XXBANYYP
 
+[Document9]
+DocumentPath=CanBusTester.Annotation
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
 [Parameter1]
 Name=CAGE_CODE
 Value=?????
 
 [Parameter2]
+Name=Company
+Value=Colorado State University
+
+[Parameter3]
 Name=CONTRACT_NUMBER
 Value=<CONTRACT NO>
 
-[Parameter3]
+[Parameter4]
+Name=DesignedByURL
+Value=Thomas Balzer
+
+[Parameter5]
 Name=DOC_NO_ASSY_DWG
 Value=<ASSY DWG NO>
 
-[Parameter4]
+[Parameter6]
 Name=DOC_NO_BOM
 Value=<BOM DOC NO>
 
-[Parameter5]
+[Parameter7]
 Name=DOC_NO_FAB_DWG
 Value=<FAB DWG NO>
 
-[Parameter6]
+[Parameter8]
 Name=DOC_NO_SCH_DWG
 Value=<SCH DWG NO>
 
-[Parameter7]
+[Parameter9]
 Name=PCB_2_DEC_TOL
 Value=+/-.01
 
-[Parameter8]
+[Parameter10]
 Name=PCB_3_DEC_TOL
 Value=+/-.010
 
-[Parameter9]
+[Parameter11]
 Name=PCB_ANG_TOL
 Value=+/-1/2
 
-[Parameter10]
+[Parameter12]
 Name=PCB_ASSEMBLY_NO
 Value=<PCB ASSY NO>
 
-[Parameter11]
+[Parameter13]
 Name=PCB_CHECKER
 Value=- -----
 
-[Parameter12]
+[Parameter14]
 Name=PCB_CHECKER_APP_DATE
 Value=--/--/----
 
-[Parameter13]
+[Parameter15]
 Name=PCB_DESIGNER
 Value=- -----
 
-[Parameter14]
+[Parameter16]
 Name=PCB_DESIGNER_APP_DATE
 Value=--/--/----
 
-[Parameter15]
+[Parameter17]
 Name=PCB_DWG_NO
 Value=<PCB DWG NO>
 
-[Parameter16]
+[Parameter18]
 Name=PCB_ENGINEER
 Value=- -----
 
-[Parameter17]
+[Parameter19]
 Name=PCB_ENGINEER_APP_DATE
 Value=--/--/----
 
-[Parameter18]
+[Parameter20]
 Name=PCB_PART_NUMBER
 Value=<PCB PN>
 
-[Parameter19]
+[Parameter21]
 Name=PCB_REV
 Value=A
 
-[Parameter20]
+[Parameter22]
+Name=Project
+Value=CANBus Tester
+
+[Parameter23]
 Name=SCH_REV
 Value=A
+
+[Parameter24]
+Name=VersionRevision
+Value=V1
 
 [Configuration1]
 Name=Default Configuration
@@ -1245,6 +1281,14 @@ MatchStrictly2=1
 PhysicalNamingFormat=$Component_$RoomName
 GlobalIndexSortOrder=3
 GlobalIndexSortLocation=0
+UniqueIDPath0=
+DocumentName0=CircuitBoard.SchDoc
+IsEnabled0=1
+SelectionScope0=All
+Order0=1
+IndexEnabled0=0
+IndexStartValue0=1
+Suffix0=
 
 [PrjClassGen]
 CompClassManualEnabled=0
@@ -1290,4 +1334,7 @@ ComparisonOptions5=Kind=Structure Class|MinPercent=75|MinMatch=3|ShowMatch=0|Use
 
 [SmartPDF]
 PageOptions=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=Letter|PaperIndex=1
+
+[Parameter Manager Custom Column Order]
+<Schematic>=Comment,"Component Kind",Description,Footprint,"Ibis Model","Library Name","Library Reference",PCB3D,"Pin Info","Signal Integrity",Simulation,Manufacturer,MF,"Mounting Technology",MP,"Nominal Vf",Package,"Package Description","Package Quantity","Package Reference",PackageReference,Packaging,"Part Number",Pins,Power,Value
 
