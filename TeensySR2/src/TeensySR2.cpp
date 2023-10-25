@@ -4,12 +4,14 @@
 #include <SPI.h>
 #include <FlexCAN_T4.h>
 #include <initializer_list>
+#include <ACAN_T4.h>
+#include <ACAN2517FD.h>
 
 //Touch Screen Setup
 // Define the display and touch screen objects
-const int TFT_CS = 10;
+const int TFT_CS = 8;
 const int TFT_DC = 9;
-const int TFT_RST = 8;
+const int TFT_RST = 10;
 Adafruit_HX8357 tft = Adafruit_HX8357(TFT_CS, TFT_DC, TFT_RST);
 Adafruit_GFX_Button button;
 
@@ -234,6 +236,8 @@ void resetCounters() {
 void runSelfTest() {
   testTimer = 0;
   //Turn on bridging
+  digitalWrite(6, HIGH);
+  delay(200);
   while(TXCount1 < 100) {
     if ((Can1.getTXQueueCount() == 0)) {
       txmsg1.id = TXCount1;
@@ -260,6 +264,7 @@ void runSelfTest() {
   tft.printf("Can2 messages sent: %d\n",TXCount2);
   tft.printf("Received: %d\n",RXCount1);
   resetCounters();
+  digitalWrite(6, LOW);
 }
 
 void runQuickStart() {
@@ -383,14 +388,32 @@ Button can1BaudrateButton(200, 250, 100, 120, can1BaudrateHandle);
 Button can2BaudrateButton(350, 400, 100, 120, can2BaudrateHandle);
 Button run(420, 470, 0, 50, runHandle);
 
+//SPI Can setup
+static const byte MCP2517_CS  = 21 ; // CS input of MCP2517
+static const uint32_t ARBITRATION_BIT_RATE = 250000 ;
+const DataBitRateFactor DATA_BIT_RATE_FACTOR = DataBitRateFactor::x2 ;
+ACAN2517FD can2517FD (MCP2517_CS, SPI, 255) ;
+
 void setup() {
   // Initialize touch screen and draw main menu
   tft.begin();
   tft.setRotation(3);
   tft.setSPISpeed(19000000);
-  Serial.begin(9600);
+  //Serial.begin(9600);
+  delay(50);
+Serial.println ("CAN3FD/MCP2517FD test") ;
+//--- Setup MCP2517FD
+  ACAN2517FDSettings settings (ACAN2517FDSettings::OSC_40MHz, ARBITRATION_BIT_RATE, DATA_BIT_RATE_FACTOR) ;
+  settings.mTXCANIsOpenDrain = true ;
+  SPI.begin () ;
+  uint32_t errorCode = can2517FD.begin (settings, NULL);
+  if (errorCode == 0) {
+   Serial.println ("MCP2517FD ok") ;
+  }else{
+    Serial.print ("Error MCP2517FD: 0x") ;
+    Serial.println (errorCode, HEX) ;
+  }
   drawMenu();
-
   Can1.begin();
   Can1.setBaudRate(BAUDRATE250K);
   Can1.setMaxMB(64);
@@ -428,6 +451,7 @@ void setup() {
   pinMode(BLUE_LED_PIN, OUTPUT);
   pinMode(ORANGE_LED_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT); */
+  pinMode(6, OUTPUT);
 }
 
 void loop() {

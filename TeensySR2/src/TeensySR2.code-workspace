@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "TesterSPICAN",
+			"path": "../../../../PlatformIO/Projects/TesterSPICAN"
+		},
+		{
+			"name": "SPICANDemo",
+			"path": "../../../../PlatformIO/Projects/SPICANDemo"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.tpp": "cpp",
+			"initializer_list": "cpp"
+		}
+	}
+}
